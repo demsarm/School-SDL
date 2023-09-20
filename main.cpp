@@ -10,7 +10,7 @@ bool run = true;
 int SDL_SetRenderDrawColorRGBA(SDL_Renderer * renderer, SDL_Color color);
 bool SDL_CompareRendererDrawColor(SDL_Renderer* renderer, SDL_Color& color);
 void BlankScreen(SDL_Renderer * renderer);
-void Debug();
+
 class Player{
     public:
         int width = 50, height = 50;
