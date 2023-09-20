@@ -99,8 +99,13 @@ int main(){
             }
         }
 
+        // Player movement stuff
         keyboardState = SDL_GetKeyboardState(NULL);
         
+        if(keyboardState[SDL_SCANCODE_ESCAPE]){
+            run = false;
+        }
+
         if(keyboardState[SDL_SCANCODE_SPACE]) {
             player.xPos = WIDTH/2;
             player.yPos = HEIGHT/2;
