@@ -81,10 +81,12 @@ int main(){
     
     // Main loop
     while (run){
-        startTime = SDL_GetTicks();
+        startTime = SDL_GetTicks64();
+        SDL_Delay(std::max(0.0, (1000.0/maxFramerate) - frameTime/2));
 
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
+
         // Event processing
         while (SDL_PollEvent(&event) != 0){
             switch (event.type)
@@ -116,14 +118,17 @@ int main(){
 
         SDL_RenderPresent(renderer);
 
-        SDL_Delay(1000.0/maxFramerate);
-
+        // Frame stuff
         frameTime = SDL_GetTicks64() - startTime;
         deltaTime = frameTime/1000.0;
         //printf("%llu, %llu, %llu, %0.3f\n", startTime, SDL_GetTicks(), frameTime, deltaTime);
 
-        fps = 1000/frameTime;
-        //printf("%0.0f\n", fps);
+        fps = 1000.0/(std::max((int)frameTime, 1));
+
+        //printf("%llu, %llu, %llu\n", SDL_GetTicks64(), startTime, frameTime);
+        fflush(stdout);
+        
+        printf("%0.0f, %0.2f, %llu\r", fps, deltaTime, SDL_GetTicks64());
         
         
     }
