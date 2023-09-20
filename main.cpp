@@ -116,6 +116,16 @@ int main(){
 
         player.move(xMovement, yMovement);
 
+        int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
+        SDL_GetMouseFocus() == window ? SDL_ShowCursor(SDL_DISABLE) : SDL_ShowCursor(SDL_ENABLE);
+
+        SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255);
+        SDL_Rect cursor = {mouseX, mouseY, 10, 10};
+        SDL_RenderFillRect(renderer, &cursor);
+        
+
+        // Display stuff
         SDL_Rect playerRect = {(int)player.xPos + player.width/2, (int)player.yPos + player.height/2, player.width, player.height};
 
         SDL_SetRenderDrawColorRGBA(renderer, player.color);
