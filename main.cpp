@@ -2,8 +2,8 @@
 #include <stdio.h>    // Scanf, printf
 #include <math.h>     // Min, Max
 
-#define HEIGHT 1200
-#define WIDTH 1920
+#define HEIGHT 600
+#define WIDTH 800
 
 bool run = true;
 
@@ -15,7 +15,7 @@ class Player{
     public:
         int width = 50, height = 50;
         float xPos = WIDTH/2, yPos = HEIGHT/2;
-        int speed = 60;
+        int speed = 100;
         SDL_Color color = {0, 0, 0, 0};
 
         
@@ -67,7 +67,7 @@ int main(){
     // Clear screen
     BlankScreen(renderer);
     
-    int maxFramerate = 300;
+    int maxFramerate = 60;
     double fps;
 
     SDL_Event event;
