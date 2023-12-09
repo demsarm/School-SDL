@@ -4,14 +4,18 @@
 #include <math.h>     // Min, Max
 #include <string>
 
-#define HEIGHT 600
-#define WIDTH 800
+using namespace std;
+
+int height = 2000;
+int width = 3000;
 
 bool run = true;
 
 int SDL_SetRenderDrawColorRGBA(SDL_Renderer * renderer, SDL_Color color);
 bool SDL_CompareRendererDrawColor(SDL_Renderer* renderer, SDL_Color& color);
 void BlankScreen(SDL_Renderer * renderer);
+void SetWindowSize();
+void SetWindowSize(int width, int height);
 
 class Player{
     public:
@@ -45,6 +49,8 @@ int main(){
         return 1;
     }
 
+    SetWindowSize();
+    
     // Create the window and renderer
     // Rendering using surfaces is also a thing but it's kind of outdated
     SDL_Window *window = NULL;
@@ -233,4 +239,20 @@ void BlankScreen(SDL_Renderer * renderer){
             run = false;
         }
     }
+}
+
+// Sets the width and height variables to 0.9 * screen size.
+void SetWindowSize(){
+    SDL_DisplayMode displayMode;
+    if ((SDL_GetCurrentDisplayMode(0, &displayMode) != 0)){
+        cerr << "Failed to get current display mode " << SDL_GetError() << "\n";
+        SDL_Quit();
+        exit(1);
+    }
+    width = displayMode.w * 0.95;
+    height = displayMode.h * 0.95;
+}
+void SetWindowSize(int w, int h){
+    width = w;
+    height = h;
 }
