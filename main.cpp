@@ -1,8 +1,14 @@
+// External includes
 #include <SDL2/SDL.h> //SDL
 #include <SDL2/SDL_image.h> // Textures
 #include <iostream>    // Scanf, printf
 #include <math.h>     // Min, Max
 #include <string>
+
+// Custom headers
+#include "GameObject.hpp"
+#include "Player.hpp"
+#include "Vectors.hpp"
 
 using namespace std;
 
@@ -17,6 +23,7 @@ void BlankScreen(SDL_Renderer * renderer);
 void SetWindowSize();
 void SetWindowSize(int width, int height);
 
+/*
 class Player{
     public:
         int width = 80, height = 80;
@@ -34,15 +41,16 @@ class Player{
             playerTexture.x = xPos;
             playerTexture.y = yPos;
         }
-};
+};*/
 
-class Player player;
+
 
 string player_sprite_path ="Sprites/player.png";
 string cursor_sprite_path_empty = "Sprites/cursor-empty.png";
 string cursor_sprite_path_press = "Sprites/cursor-hold.png";
 
 int main(){
+    
     // Initialize SDL and return 1 if failed
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
         cout << "Failed to initialize SDL";
@@ -81,22 +89,11 @@ int main(){
         return 1;
     } else printf("Successfully made window and renderer\n");
 
-    SDL_Surface* player_surface = IMG_Load(player_sprite_path.c_str());
-    SDL_Texture* player_texture;
-    if (player_surface == NULL){
-        cout << "Failed to get player image" << IMG_GetError() << endl;
-        SDL_Quit();  
-    } else {
-        player_texture = SDL_CreateTextureFromSurface(renderer, player_surface);
-        SDL_FreeSurface(player_surface);
-        cout << "Loaded player image\n";
-    }
-
     // Clear screen
     BlankScreen(renderer);
     
     int maxFramerate = 60;
-    double fps;
+    //double fps;
 
     SDL_Event event;
     const Uint8* keyboardState;
@@ -107,6 +104,11 @@ int main(){
     double deltaTime = 1000.0/maxFramerate;
     Uint64 frameTime = deltaTime * 1000;
     
+    Player player(80, 80, 160);
+    player.location.x = width/2;
+    player.location.y = height/2;
+
+
     // Main loop
     while (run){
         startTime = SDL_GetTicks64();
@@ -146,13 +148,13 @@ int main(){
         SDL_Surface* cursor_surface = IMG_Load(cursor_sprite_path.c_str());
         SDL_Texture* cursor_texture;
         bool cursor_image_failed = 0;
-        if (player_surface == NULL){
+        if (cursor_surface == NULL){
             if (!cursor_image_failed) cout << "Failed to get cursor image" << IMG_GetError() << endl;
             cursor_image_failed = 1;
             SDL_Quit();  
         } else {
             cursor_texture = SDL_CreateTextureFromSurface(renderer, cursor_surface);
-            SDL_FreeSurface(player_surface);
+            SDL_FreeSurface(cursor_surface);
             cursor_image_failed = 0;
         }
 
@@ -162,8 +164,7 @@ int main(){
         }
 
         if(keyboardState[SDL_SCANCODE_SPACE]) {
-            player.xPos = width/2;
-            player.yPos = height/2;
+            player.setLocation(width/2, height/2);
         }
 
         xMovement = (keyboardState[SDL_SCANCODE_D] - keyboardState[SDL_SCANCODE_A]) * player.speed * deltaTime; 
@@ -171,27 +172,22 @@ int main(){
 
         player.move(xMovement, yMovement);
 
-        
+        if(player.setTexture(player_sprite_path, renderer)){
+            cerr << "Failed renderCopy - player " << IMG_GetError() << "\n";
+            SDL_Quit();
+        }
         
 
         // Player
-        SDL_Rect playerRect = {(int)player.xPos + player.width/2, (int)player.yPos + player.height/2, player.width, player.height};
-
-        // SDL_SetRenderDrawColorRGBA(renderer, player.color);
-        // SDL_RenderFillRect(renderer, &playerRect);
-
-        if (SDL_RenderCopy(renderer, player_texture, NULL, &player.playerTexture)) {
+        SDL_Rect playerRect = {player.location.x + player.width/2, player.location.y + player.height/2, player.width, player.height};
+        if (SDL_RenderCopy(renderer, player.texture, NULL, &playerRect)) {
             cout << "Failed RenderCopy (player)\n";
         }
-
         
-
-        // SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255);
         SDL_Rect cursor = {mouseX, mouseY, 20, 20};
         if (SDL_RenderCopy(renderer, cursor_texture, NULL, &cursor)) {
-            cout << "Failed RenderCopy (player)\n";
+            cout << "Failed RenderCopy (cursor)\n";
         }
-        // SDL_RenderFillRect(renderer, &cursor);
 
         SDL_RenderPresent(renderer);
 
@@ -200,7 +196,7 @@ int main(){
         deltaTime = frameTime/1000.0;
         //printf("%llu, %llu, %llu, %0.3f\n", startTime, SDL_GetTicks(), frameTime, deltaTime);
 
-        fps = 1000.0/(std::max((int)frameTime, 1));
+        //fps = 1000.0/(std::max((int)frameTime, 1));
 
         //printf("%llu, %llu, %llu\n", SDL_GetTicks64(), startTime, frameTime);
         
